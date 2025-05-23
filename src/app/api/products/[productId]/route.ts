@@ -3,7 +3,7 @@ import {
   NextResponse,
 } from 'next/server';
 
-import { TProduct } from '@/app/types/products.types';
+import { TProduct } from '@/types/products.types';
 import { readJSON } from '@/utils/fileUtils';
 
 type TParams = {

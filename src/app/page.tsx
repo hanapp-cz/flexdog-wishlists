@@ -1,12 +1,6 @@
 import Image from 'next/image';
 
-type TProduct = {
-  id: ID;
-  name: string;
-  price: number;
-  image: string;
-  isInStock: boolean;
-};
+import { TProduct } from '@/types/products.types';
 
 const getProducts: () => Promise<RoA<TProduct>> = async () => {
   const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/products`, {
