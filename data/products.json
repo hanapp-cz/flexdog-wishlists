@@ -1,0 +1,23 @@
+[
+  {
+    "id": "p1",
+    "name": "Dunk Low \"Safari Olympics\" - 2024",
+    "price": 4690,
+    "image": "https://static.flexdog.cz/flexdog-7/products/images/9e74be50-f85f-45e2-8040-19937df17ea2.png?width=1500&quality=80",
+    "isInStock": true
+  },
+  {
+    "id": "p2",
+    "name": "Handball Spezial \"Clear Pink\"",
+    "price": 2609,
+    "image": "https://static.flexdog.cz/flexdog-4/products/images/5e2f0952-124f-4b82-b51f-8a24977e88df.jpeg?width=1500&quality=80",
+    "isInStock": true
+  },
+  {
+    "id": "p3",
+    "name": "Liberty London Country Og",
+    "price": 2379,
+    "image": "https://static.flexdog.cz/flexdog-b/products/images/9fbb10e2-be11-4c0d-8b9f-a951a4664696.jpeg?width=1500&quality=80",
+    "isInStock": true
+  }
+]
