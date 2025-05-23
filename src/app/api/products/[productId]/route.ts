@@ -3,12 +3,11 @@ import {
   NextResponse,
 } from 'next/server';
 
+import { TApiParams } from '@/types/params.types';
 import { TProduct } from '@/types/products.types';
 import { readJSON } from '@/utils/fileUtils';
 
-type TParams = {
-  params: Promise<{ productId: ID }>;
-};
+type TParams = TApiParams<{ productId: ID }>;
 
 type TData = { data: TProduct; error?: never } | { data: null; error: string };
 
