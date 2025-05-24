@@ -1,7 +1,9 @@
 import Image from 'next/image';
 
+import { AddToWishlistButton } from '@/components/AddToWishlistButton';
 import { TPageProps } from '@/types/params.types';
 import { TProduct } from '@/types/products.types';
+import { cn } from '@/utils/cn';
 
 type TProps = TPageProps<{ productId: ID }>;
 
@@ -27,17 +29,32 @@ const Product: React.FC<TProps> = async ({ params }) => {
   const product: TProduct = data;
 
   return (
-    <main className="min-h-full">
-      <h1>Product</h1>
-      <div>
-        <h2>{product.name}</h2>
-        <p>{product.price} CZK</p>
+    <main
+      className={cn(
+        "min-h-full container mx-auto",
+        "grid md:grid-cols-2 gap-8",
+        "px-4 py-16"
+      )}
+    >
+      <div className="rounded-2xl relative overflow-hidden">
         <Image
           src={product.image}
           alt={product.name}
-          width={275}
-          height={275}
+          width={500}
+          height={500}
+          className="w-full "
         />
+        <AddToWishlistButton
+          className="absolute top-4 right-4"
+          productId={product.id}
+          wishlistId="w1" // TODO: Replace with actual wishlist ID
+          userId="u1" // TODO: Replace with actual user ID
+        />
+      </div>
+
+      <div>
+        <h1 className="text-2xl">{product.name}</h1>
+        <p>{product.price} CZK</p>
       </div>
     </main>
   );
