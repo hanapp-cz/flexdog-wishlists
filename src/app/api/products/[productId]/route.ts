@@ -4,7 +4,10 @@ import {
 } from 'next/server';
 
 import { TApiParams } from '@/types/params.types';
-import { TProduct } from '@/types/products.types';
+import {
+  TProduct,
+  TProducts,
+} from '@/types/products.types';
 import { readJSON } from '@/utils/fileUtils';
 
 type TParams = TApiParams<{ productId: ID }>;
@@ -15,9 +18,9 @@ export async function GET(request: NextRequest, { params }: TParams) {
   const { productId } = await params;
 
   try {
-    const products: RoA<TProduct> = await readJSON("products.json");
+    const products: TProducts = await readJSON("products.json");
 
-    const product = products.find((product) => product.id === productId);
+    const product = products[productId];
 
     if (!product) {
       return NextResponse.json<TData>(

@@ -5,3 +5,14 @@ export type TProduct = {
   image: string;
   isInStock: boolean;
 };
+
+export type TProductForUI = {
+  id: ID;
+  name: string;
+  price: number;
+  priceAtAddition: number;
+  image: string;
+  isInStock: boolean;
+};
+
+export type TProducts = Record<ID, TProduct>;

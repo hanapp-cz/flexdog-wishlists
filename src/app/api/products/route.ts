@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
 
-import { TProduct } from '@/types/products.types';
+import {
+  TProduct,
+  TProducts,
+} from '@/types/products.types';
 import { readJSON } from '@/utils/fileUtils';
 
 type TData =
@@ -9,9 +12,12 @@ type TData =
 
 export async function GET() {
   try {
-    const products = await readJSON("products.json");
+    const products: TProducts = await readJSON("products.json");
 
-    return NextResponse.json<TData>({ data: products }, { status: 200 });
+    return NextResponse.json<TData>(
+      { data: Object.values(products) },
+      { status: 200 }
+    );
   } catch {
     return NextResponse.json<TData>(
       { data: null, error: "failed to load data" },
