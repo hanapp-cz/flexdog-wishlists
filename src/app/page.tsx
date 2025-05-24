@@ -1,6 +1,4 @@
-import Image from 'next/image';
-import Link from 'next/link';
-
+import { ProductCard } from '@/components/ProductCard';
 import { TPageProps } from '@/types/params.types';
 import { TProduct } from '@/types/products.types';
 
@@ -24,23 +22,11 @@ const Home: React.FC<TProps> = async () => {
   const products: RoA<TProduct> = data;
 
   return (
-    <main className="min-h-full">
+    <main className="min-h-full container mx-auto">
       <h1>Products</h1>
       <ul className="grid grid-cols-[repeat(auto-fill,minmax(275px,1fr))] gap-8">
         {products.map((product) => (
-          <li key={product.id}>
-            <Link href={`/product/${product.id}`} className="underline">
-            {product.name}
-            </Link>
-
-            <Image
-              src={product.image}
-              alt={product.name}
-              width={275}
-              height={275}
-            />
-            <p>{product.price} CZK</p>
-          </li>
+          <ProductCard key={product.id} product={product} />
         ))}
       </ul>
     </main>
