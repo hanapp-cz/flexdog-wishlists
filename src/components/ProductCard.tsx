@@ -3,16 +3,21 @@ import * as React from 'react';
 import Image from 'next/image';
 
 import { TProduct } from '@/types/products.types';
-import { cn } from '@/utils/cn';
+import { TWishListMetadata } from '@/types/wishlists.types';
 
 import { AddToWishlistButton } from './AddToWishlistButton';
 import { Card } from './ui/Card';
 
 type TProps = NoChildren & {
   product: TProduct;
+  wishlists: RoA<TWishListMetadata>;
 };
 
-export const ProductCard: React.FC<TProps> = ({ product }) => {
+/**
+ * Card component to display a product with its image, name, price,
+ * and an option to add it to a wishlist
+ */
+export const ProductCard: React.FC<TProps> = ({ product, wishlists }) => {
   return (
     <Card>
       <div className="relative aspect-square w-full">
@@ -37,8 +42,8 @@ export const ProductCard: React.FC<TProps> = ({ product }) => {
       <AddToWishlistButton
         className="absolute top-2 right-2 z-20"
         productId={product.id}
-        wishlistId="w1" // TODO: Replace with actual wishlist ID
         userId="u1" // TODO: Replace with actual user ID
+        wishlists={wishlists}
       />
     </Card>
   );
