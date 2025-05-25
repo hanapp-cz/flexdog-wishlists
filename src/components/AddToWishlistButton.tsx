@@ -3,9 +3,7 @@
 import * as React from 'react';
 
 import { addProductToWishlist } from '@/actions/addProductToWishlist';
-
-import { ButtonIcon } from './ButtonIcon';
-import { IconHeart } from './IconHeart';
+import { ButtonIcon } from './ui/ButtonIcon';
 
 type TAddParams = FirstParam<typeof addProductToWishlist>;
 
