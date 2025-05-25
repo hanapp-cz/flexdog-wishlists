@@ -29,34 +29,30 @@ const Product: React.FC<TProps> = async ({ params }) => {
   const product: TProduct = data;
 
   return (
-    <main
-      className={cn(
-        "min-h-full container mx-auto",
-        "grid md:grid-cols-2 gap-8",
-        "px-4 py-16"
-      )}
-    >
-      <div className="rounded-2xl relative overflow-hidden">
+    <>
+      <div className="grid md:grid-cols-2 gap-4 rounded-2xl overflow-hidden bg-gray-100 border border-gray-200">
+        <div className="relative bg-white">
         <Image
           src={product.image}
           alt={product.name}
           width={500}
           height={500}
-          className="w-full "
+            className="w-full"
         />
         <AddToWishlistButton
-          className="absolute top-4 right-4"
+            className="absolute top-4 right-4 shadow-md"
           productId={product.id}
           wishlistId="w1" // TODO: Replace with actual wishlist ID
           userId="u1" // TODO: Replace with actual user ID
         />
       </div>
 
-      <div>
+        <div className="p-4">
         <h1 className="text-2xl">{product.name}</h1>
         <p>{product.price} CZK</p>
       </div>
-    </main>
+      </div>
+    </>
   );
 };
 

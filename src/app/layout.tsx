@@ -5,6 +5,7 @@ import {
   Geist,
   Geist_Mono,
 } from 'next/font/google';
+import Link from 'next/link';
 
 import { Toaster } from '@/components/ui/Sonner';
 
@@ -33,7 +34,21 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <header className="p-6 sticky top-0 bg-white border-b shadow-md z-50">
+          <nav>
+            <ul className="flex gap-4 text-lg">
+              <li>
+                <Link href={`/`}>Products</Link>
+              </li>
+              <li>
+                <Link href={`/wishlist`}>Wishlists</Link>
+              </li>
+            </ul>
+          </nav>
+        </header>
+        <main className="min-h-full container mx-auto py-8 grid gap-4 content-start">
+          {children}
+        </main>
         <Toaster />
       </body>
     </html>

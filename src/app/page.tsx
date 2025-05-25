@@ -22,14 +22,14 @@ const Home: React.FC<TProps> = async () => {
   const products: RoA<TProduct> = data;
 
   return (
-    <main className="min-h-full container mx-auto">
+    <>
       <h1>Products</h1>
       <ul className="grid grid-cols-[repeat(auto-fill,minmax(275px,1fr))] gap-8">
         {products.map((product) => (
           <ProductCard key={product.id} product={product} />
         ))}
       </ul>
-    </main>
+    </>
   );
 };
 
