@@ -1,0 +1,30 @@
+import { TProductForUI } from './products.types';
+
+// * Server types
+export type TWishlistProduct = {
+  id: ID;
+  price: number;
+};
+
+export type TWishlist = {
+  id: ID;
+  name: string;
+  description?: string;
+  isPublic: boolean;
+  products: RoA<TWishlistProduct>;
+};
+
+export type TWishlists = Record<ID, TWishlist>;
+
+// * UI types
+export type TWishListMetadata = {
+  id: ID;
+  name: string;
+  description?: string;
+  isPublic: boolean;
+  productsCount: number;
+};
+
+export type TWishlistForUI = OmitSafe<TWishlist, "products"> & {
+  products: RoA<TProductForUI>;
+};

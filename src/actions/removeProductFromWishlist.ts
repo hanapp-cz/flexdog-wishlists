@@ -1,5 +1,7 @@
 "use server";
 
+import { revalidateTag } from 'next/cache';
+
 import { getErrorMessage } from '@/utils/getErrorMessage';
 
 type TOptions = {
@@ -8,8 +10,10 @@ type TOptions = {
   productId: ID;
 };
 
-// Add a product to a user's wishlist
-export const addProductToWishlist = async ({
+/**
+ * Remove a product from a user's wishlist
+ */
+export const removeProductFromWishlist = async ({
   productId,
   userId,
   wishlistId,
@@ -18,18 +22,17 @@ export const addProductToWishlist = async ({
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_BASE_URL}/api/wishlists/${userId}/${wishlistId}/products/${productId}`,
       {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ productId }),
+        method: "DELETE",
       }
     );
+
+    // Invalidate the cache for this wishlist
+    revalidateTag(`wishlist-${wishlistId}`);
 
     return await res.json();
   } catch (error) {
     throw new Error(
-      getErrorMessage(error, "Failed to add product to wishlist")
+      getErrorMessage(error, "Failed to remove product from wishlist")
     );
   }
 };
