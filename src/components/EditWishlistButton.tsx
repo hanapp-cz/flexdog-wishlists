@@ -1,17 +1,17 @@
 "use client";
-import * as React from 'react';
+import * as React from "react";
 
-import { Edit } from 'lucide-react';
-import { Dialog } from 'radix-ui';
+import { Edit } from "lucide-react";
+import { Dialog } from "radix-ui";
 
-import { TWishListMetadata } from '@/types/wishlists.types';
-import { cn } from '@/utils/cn';
+import { TWishListMetadata } from "@/types/wishlists.types";
+import { cn } from "@/utils/cn";
 
-import { ButtonIcon } from './ui/ButtonIcon';
-import { WishlistDialog } from './WishlistDialog';
+import { ButtonIcon } from "./ui/ButtonIcon";
+import { WishlistDialog } from "./WishlistDialog";
 
 type TProps = NoChildren & {
-  wishlist: TWishListMetadata;
+  wishlist: OmitSafe<TWishListMetadata, "productsCount">;
   className?: ButtonClassName;
 };
 

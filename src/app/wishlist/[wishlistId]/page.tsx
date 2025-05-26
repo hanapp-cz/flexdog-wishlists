@@ -1,13 +1,13 @@
-import { getWishlist } from '@/actions/getWishlist';
-import { getWishlists } from '@/actions/getWishlists';
-import { ProductInWishlist } from '@/components/ProductInWishlist';
-import { TPageProps } from '@/types/params.types';
-import { TWishlistForUI } from '@/types/wishlists.types';
-import { getErrorMessage } from '@/utils/getErrorMessage';
+import { getWishlist } from "@/actions/getWishlist";
+import { getWishlists } from "@/actions/getWishlists";
+import { Wishlist } from "@/components/Wishlist";
+import { TPageProps } from "@/types/params.types";
+import { TWishlistForUI } from "@/types/wishlists.types";
+import { getErrorMessage } from "@/utils/getErrorMessage";
 
 type TProps = TPageProps<{ wishlistId: ID }>;
 
-const Wishlist: React.FC<TProps> = async ({ params }) => {
+const WishlistPage: React.FC<TProps> = async ({ params }) => {
   const { wishlistId } = await params;
 
   const [wishlistResult, allWishlistsResult] = await Promise.all([
@@ -28,24 +28,7 @@ const Wishlist: React.FC<TProps> = async ({ params }) => {
 
   const wishlist: TWishlistForUI = data;
 
-  return (
-    <>
-      <h1 className="text-2xl font-semibold">{wishlist.name}</h1>
-      <p>{wishlist.description}</p>
-
-      <ul className="flex flex-col gap-4">
-        {wishlist.products.map((product) => (
-          <li key={product.id}>
-            <ProductInWishlist
-              product={product}
-              wishlistId={wishlist.id}
-              wishlists={allWishlists}
-            />
-          </li>
-        ))}
-      </ul>
-    </>
-  );
+  return <Wishlist wishlist={wishlist} allWishlists={allWishlists} />;
 };
 
-export default Wishlist;
+export default WishlistPage;

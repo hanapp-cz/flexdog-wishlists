@@ -12,7 +12,7 @@ import { Card } from './ui/Card';
 type TProps = NoChildren & {
   product: TProductForUI;
   wishlistId: ID;
-  wishlists: PropsOf<typeof MoveToWishlistButton>["wishlists"];
+  wishlists?: PropsOf<typeof MoveToWishlistButton>["wishlists"];
 };
 
 /**
@@ -27,6 +27,7 @@ export const ProductInWishlist: React.FC<TProps> = ({
   wishlists,
   wishlistId,
 }) => {
+  const isReadOnly = !wishlists;
   const isPriceHigher = product.price > product.priceAtAddition;
 
   return (
@@ -50,19 +51,21 @@ export const ProductInWishlist: React.FC<TProps> = ({
         </div>
 
         <div className="flex flex-col items-end justify-between">
-          <div className="relative z-20 flex gap-2">
-            <MoveToWishlistButton
-              productId={product.id}
-              wishlists={wishlists}
-              wishlistId={wishlistId}
-              userId="u1" // TODO: Replace with actual user ID
-            />
-            <RemoveFromWishlistButton
-              productId={product.id}
-              wishlistId={wishlistId}
-              userId="u1" // TODO: Replace with actual user ID
-            />
-          </div>
+          {!isReadOnly && (
+            <div className="relative z-20 flex gap-2">
+              <MoveToWishlistButton
+                productId={product.id}
+                wishlists={wishlists}
+                wishlistId={wishlistId}
+                userId="u1" // TODO: Replace with actual user ID
+              />
+              <RemoveFromWishlistButton
+                productId={product.id}
+                wishlistId={wishlistId}
+                userId="u1" // TODO: Replace with actual user ID
+              />
+            </div>
+          )}
 
           <Card.GoToDetail />
         </div>
