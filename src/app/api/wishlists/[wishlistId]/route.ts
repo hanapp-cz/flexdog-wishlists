@@ -136,6 +136,13 @@ export async function DELETE(request: NextRequest, { params }: TParams) {
       );
     }
 
+    if (wishlist.isDefault) {
+      return NextResponse.json<TData>(
+        { data: null, error: "Cannot delete default wishlist" },
+        { status: 400 }
+      );
+    }
+
     //Remove the wishlist file
     await deleteFile(`wishlist/${wishlistId}.json`);
 

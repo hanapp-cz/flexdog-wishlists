@@ -28,6 +28,7 @@ export const AddToCartButton: React.FC<TProps> = ({ wishlist, className }) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const [shouldRemove, setShouldRemove] = React.useState(false);
 
+  const toggleRemove = () => setShouldRemove((prev) => !prev);
   const toggleDialog = () => setIsOpen((prev) => !prev);
 
   const addToCart = async () => {
@@ -78,15 +79,15 @@ export const AddToCartButton: React.FC<TProps> = ({ wishlist, className }) => {
           <DialogCloseButton />
           <DialogTitle>Do you want to keep this wishlist?</DialogTitle>
 
-          <div className="flex items-center justify-center py-8">
-            <label className="flex items-center gap-2">
+          <div className="flex items-center justify-center py-8 max-w-[30ch] mx-auto">
+            <label className="flex items-center gap-3 ">
               <input
                 type="checkbox"
                 checked={shouldRemove}
-                onChange={(e) => setShouldRemove(e.target.checked)}
-                className="size-4"
+                onChange={toggleRemove}
+                className="min-w-4 min-h-4"
               />
-              Delete wishlist after adding to cart
+              Remove products from the wishlist after adding to cart
             </label>
           </div>
 

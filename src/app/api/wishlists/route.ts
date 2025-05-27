@@ -16,6 +16,8 @@ type TData =
   | { data: RoA<TWishListMetadata> | TWishListMetadata; error?: never }
   | { data: null; error: string };
 
+const DEFAULT_WISHLIST_NAME = "My Wishlist";
+
 // get all wishlists for a user
 export async function GET() {
   try {
@@ -32,10 +34,26 @@ export async function GET() {
     const userIndex = await readJSON("wishlist/user-index.json");
     const wishlistIds: RoA<ID> = userIndex[userId] || [];
 
-    if (!wishlistIds) {
+    // If no wishlists exist for the user, create a default wishlist
+    if (wishlistIds.length === 0) {
+      const defaultWishlist = {
+        id: crypto.randomUUID(),
+        name: DEFAULT_WISHLIST_NAME,
+        description: "",
+        isPublic: false,
+        isDefault: true,
+        products: [],
+      };
+      await writeJSON(`wishlist/${defaultWishlist.id}.json`, defaultWishlist);
+
+      // Update user-index
+      userIndex[userId] = [defaultWishlist.id];
+      await writeJSON("wishlist/user-index.json", userIndex);
+
+      const defaultWishlistForUI = getWishListForUI(defaultWishlist);
       return NextResponse.json<TData>(
-        { data: null, error: "wishlists not found" },
-        { status: 404 }
+        { data: [defaultWishlistForUI] },
+        { status: 200 }
       );
     }
 
@@ -88,6 +106,7 @@ export async function POST(request: NextRequest) {
       description: requestData.description ?? "",
       products: requestData.products ?? [],
       isPublic: false,
+      isDefault: false,
     };
 
     // Create new file with new wishlist

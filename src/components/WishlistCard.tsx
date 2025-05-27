@@ -31,10 +31,12 @@ export const WishlistCard: React.FC<TProps> = ({ wishlist }) => {
 
       <div className="relative p-4 z-20 flex gap-4">
         <EditWishlistButton wishlist={wishlist} />
-        <DeleteWishlistButton
-          wishlistId={wishlist.id}
-          hasItems={wishlist.productsCount > 0}
-        />
+        {!wishlist.isDefault && (
+          <DeleteWishlistButton
+            wishlistId={wishlist.id}
+            hasItems={wishlist.productsCount > 0}
+          />
+        )}
       </div>
     </Card>
   );

@@ -54,16 +54,23 @@ export const AddToWishlistButton: React.FC<TProps> = ({
     }
   };
 
+  const renderAddButton = (onClick?: PropsOf<typeof ButtonIcon>["onClick"]) => (
+    <ButtonIcon
+      className={cn("relative", className)}
+      icon={<Heart />}
+      onClick={onClick}
+      srText="Add to wishlist"
+    />
+  );
+
+  if (wishlists.length === 1) {
+    return renderAddButton(() => addToWishlist(wishlists[0].id));
+  }
+
   return (
     <WishlistDialog type="add">
       <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <ButtonIcon
-            className={cn("relative", className)}
-            icon={<Heart />}
-            srText="Add to wishlist"
-          />
-        </DropdownMenuTrigger>
+        <DropdownMenuTrigger asChild>{renderAddButton()}</DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-fit">
           <DropdownMenuLabel>Select Wishlist</DropdownMenuLabel>
           <DropdownMenuSeparator />
