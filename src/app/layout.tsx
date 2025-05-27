@@ -46,7 +46,7 @@ export default function RootLayout({
             </ul>
           </nav>
         </header>
-        <main className="min-h-full container mx-auto py-8 grid gap-4 content-start">
+        <main className="px-2 md:px-0 min-h-full container mx-auto py-8 grid gap-4 content-start">
           {children}
         </main>
         <Toaster />

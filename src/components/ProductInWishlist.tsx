@@ -32,9 +32,16 @@ export const ProductInWishlist: React.FC<TProps> = ({
 
   return (
     <Card className="flex-row items-stretch">
-      <Image src={product.image} alt={product.name} width={150} height={150} />
+      <div className="grow-0 aspect-square rounded-br-[50%] overflow-hidden size-[150px]">
+        <Image
+          src={product.image}
+          alt={product.name}
+          width={150}
+          height={150}
+        />
+      </div>
 
-      <div className="p-4 flex flex-1 justify-between">
+      <div className="p-4 flex flex-col flex-1 justify-between md:flex-row gap-4">
         <div className="flex flex-col gap-2">
           <h2 className="text-base font-semibold tracking-tight">
             <Link href={`/product/${product.id}`}>
@@ -54,7 +61,7 @@ export const ProductInWishlist: React.FC<TProps> = ({
           )}
         </div>
 
-        <div className="flex flex-col items-end justify-between">
+        <div className="flex flex-col gap-2 items-end justify-between">
           {!isReadOnly && (
             <div className="relative z-20 flex gap-2">
               <MoveToWishlistButton
