@@ -11,6 +11,7 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 - **Wishlist Overview & Detail:** View all wishlists with summary info, and see detailed product data for each wishlist.
 - **Price Tracking:** Detect and display if a product’s price has increased since it was added to a wishlist.
 - **Sharing Wishlists:** Share wishlists with others via a unique URL.
+- **Adding to Cart:** Users can add products to their cart directly from the wishlist.
 
 ### 💻 Tech Stack
 
