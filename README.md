@@ -4,6 +4,9 @@ This project is a Next.js application that demonstrates a complete wishlist mana
 
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+API is built using [Next.js API Routes](https://nextjs.org/docs/app/building-your-application/routing/api-routes).
+It is designed for testing & demonstrating purposes only as fetching in server components from api routes is not the right way to do it. See the [Next.js FAQ](https://nextjs-faq.com/fetch-api-in-rsc) for more details.
+
 ### ✨ Features
 
 - **User Wishlists:** Users can create, view, update (rename/describe), and delete wishlists.
