@@ -28,7 +28,7 @@ export const ProductInWishlist: React.FC<TProps> = ({
   wishlistId,
 }) => {
   const isReadOnly = !wishlists;
-  const isPriceHigher = product.price > product.priceAtAddition;
+  const hasPriceChanged = product.price !== product.priceAtAddition;
 
   return (
     <Card className="flex-row items-stretch">
@@ -45,8 +45,12 @@ export const ProductInWishlist: React.FC<TProps> = ({
 
           <p className="text-sm">{product.price} CZK</p>
 
-          {isPriceHigher && (
-            <p className="text-sm text-red-700">Price increased!</p>
+          {hasPriceChanged && (
+            <p className="text-sm text-red-700">New price!</p>
+          )}
+
+          {!product.isInStock && (
+            <p className="text-sm text-red-700">Sold out</p>
           )}
         </div>
 
