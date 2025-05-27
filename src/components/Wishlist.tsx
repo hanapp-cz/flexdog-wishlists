@@ -1,10 +1,11 @@
-import * as React from "react";
+import * as React from 'react';
 
-import { TWishlistForUI } from "@/types/wishlists.types";
+import { TWishlistForUI } from '@/types/wishlists.types';
 
-import { EditWishlistButton } from "./EditWishlistButton";
-import { ProductInWishlist } from "./ProductInWishlist";
-import { ShareButton } from "./ShareButton";
+import { AddToCartButton } from './AddToCartButton';
+import { EditWishlistButton } from './EditWishlistButton';
+import { ProductInWishlist } from './ProductInWishlist';
+import { ShareButton } from './ShareButton';
 
 type TProps = NoChildren & {
   wishlist: TWishlistForUI;
@@ -24,6 +25,10 @@ export const Wishlist: React.FC<TProps> = ({ wishlist, allWishlists }) => {
 
         {!isReadOnly && (
           <div className="flex items-center gap-4">
+            <AddToCartButton
+              className="shadow-none border-2 border-gray-300 hover:border-purple-600 transition-colors"
+              wishlist={wishlist}
+            />
             <EditWishlistButton
               wishlist={wishlist}
               className="shadow-none border-2 border-gray-300 hover:border-purple-600 transition-colors"
