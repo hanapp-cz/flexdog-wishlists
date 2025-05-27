@@ -1,11 +1,11 @@
 "use client";
 
-import * as React from "react";
+import * as React from 'react';
 
-import { toast } from "sonner";
+import { toast } from 'sonner';
 
-import { editWishlist } from "@/actions/editWishlist";
-import { cn } from "@/utils/cn";
+import { editWishlist } from '@/actions/editWishlist';
+import { cn } from '@/utils/cn';
 
 type TProps = NoChildren & {
   wishlistId: ID;
@@ -23,7 +23,6 @@ export const ShareButton: React.FC<TProps> = ({ wishlistId, isPublic }) => {
       const editWishlistPromise = editWishlist({
         wishlistData: { isPublic: true },
         wishlistId,
-        userId: "u1", // TODO: Replace with actual user ID
       });
 
       await Promise.all([

@@ -8,39 +8,49 @@ import { TProducts } from '@/types/products.types';
 import {
   TWishlist,
   TWishlistForUI,
-  TWishlists,
 } from '@/types/wishlists.types';
+import { checkUserAccess } from '@/utils/checkUserAccess';
 import {
+  deleteFile,
   readJSON,
   writeJSON,
 } from '@/utils/fileUtils';
 
-type TParams = TApiParams<{ userId: ID; wishlistId: ID }>;
+type TParams = TApiParams<{ wishlistId: ID }>;
 
 type TData =
   | { data: TWishlistForUI; error?: never }
   | { data: null; error: string };
 
-// Get a specific wishlist for a user
+// Get a specific wishlist
 export async function GET(request: NextRequest, { params }: TParams) {
-  const { userId, wishlistId } = await params;
+  const { wishlistId } = await params;
 
   try {
-    const wishlists: TWishlists = await readJSON(`wishlist/${userId}.json`);
+    const userId = process.env.USER_ID ?? null;
 
-    if (!wishlists) {
+    const wishlist: TWishlist = await readJSON(`wishlist/${wishlistId}.json`);
+
+    if (!wishlist) {
       return NextResponse.json<TData>(
-        { data: null, error: "wishlists not found" },
+        { data: null, error: "Wishlist not found" },
         { status: 404 }
       );
     }
 
-    const wishlist = wishlists[wishlistId];
+    // Check if the userId matches the wishlist owner
+    const { isAuthorized } = await checkUserAccess({
+      userId,
+      wishlistId,
+    });
 
-    if (!wishlist) {
+    if (
+      (!userId && !wishlist.isPublic) ||
+      (userId && !wishlist.isPublic && !isAuthorized)
+    ) {
       return NextResponse.json<TData>(
-        { data: null, error: "wishlist not found" },
-        { status: 404 }
+        { data: null, error: "This wishlist is private" },
+        { status: 401 }
       );
     }
 
@@ -49,7 +59,7 @@ export async function GET(request: NextRequest, { params }: TParams) {
     return NextResponse.json<TData>({ data: wishlistForUI }, { status: 200 });
   } catch {
     return NextResponse.json<TData>(
-      { data: null, error: "failed to load data" },
+      { data: null, error: "Failed to load data" },
       { status: 500 }
     );
   }
@@ -57,36 +67,41 @@ export async function GET(request: NextRequest, { params }: TParams) {
 
 // Update a specific wishlist for a user
 export async function PATCH(request: NextRequest, { params }: TParams) {
-  const { userId, wishlistId } = await params;
+  const { wishlistId } = await params;
   try {
-    const wishlists = await readJSON(`wishlist/${userId}.json`);
+    const userId = process.env.USER_ID ?? null;
 
-    if (!wishlists) {
+    // Check if the userId matches the wishlist owner
+    const { isAuthorized } = await checkUserAccess({
+      userId,
+      wishlistId,
+    });
+
+    if (!isAuthorized) {
       return NextResponse.json<TData>(
-        { data: null, error: "wishlists not found" },
-        { status: 404 }
+        { data: null, error: "Unauthorized" },
+        { status: 401 }
       );
     }
 
-    const wishlist = wishlists[wishlistId];
+    const wishlist = await readJSON(`wishlist/${wishlistId}.json`);
 
     if (!wishlist) {
       return NextResponse.json<TData>(
-        { data: null, error: "wishlist not found" },
+        { data: null, error: "Wishlist not found" },
         { status: 404 }
       );
     }
 
     const updatedWishlist = await updateWishlist(wishlist, request);
-    const newWishlists = { ...wishlists, [wishlistId]: updatedWishlist };
-    await writeJSON(`wishlist/${userId}.json`, newWishlists);
+    await writeJSON(`wishlist/${wishlistId}.json`, updatedWishlist);
 
     const wishlistForUI = await getWishListForUI(updatedWishlist);
 
     return NextResponse.json<TData>({ data: wishlistForUI }, { status: 200 });
   } catch {
     return NextResponse.json<TData>(
-      { data: null, error: "failed to load data" },
+      { data: null, error: "Failed to load data" },
       { status: 500 }
     );
   }
@@ -94,28 +109,51 @@ export async function PATCH(request: NextRequest, { params }: TParams) {
 
 // Delete a specific wishlist for a user
 export async function DELETE(request: NextRequest, { params }: TParams) {
-  const { userId, wishlistId } = await params;
+  const { wishlistId } = await params;
 
   try {
-    const wishlists = await readJSON(`wishlist/${userId}.json`);
+    const userId = process.env.USER_ID ?? null;
 
-    if (!wishlists) {
+    // Check if the userId matches the wishlist owner
+    const { isAuthorized, userIndex } = await checkUserAccess({
+      userId,
+      wishlistId,
+    });
+
+    if (!isAuthorized || !userId) {
       return NextResponse.json<TData>(
-        { data: null, error: "wishlists not found" },
+        { data: null, error: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+
+    const wishlist = await readJSON(`wishlist/${wishlistId}.json`);
+
+    if (!wishlist) {
+      return NextResponse.json<TData>(
+        { data: null, error: "Wishlist not found" },
         { status: 404 }
       );
     }
 
-    const { [wishlistId]: deletedWishlist, ...rest } = wishlists;
+    //Remove the wishlist file
+    await deleteFile(`wishlist/${wishlistId}.json`);
 
-    await writeJSON(`wishlist/${userId}.json`, rest);
+    // Remove the wishlist from the user index
+    const userWishlists: RoA<ID> = userIndex[userId] || [];
+    const updatedUserWishlists = userWishlists.filter(
+      (id) => id !== wishlistId
+    );
 
-    const wishlistForUI = await getWishListForUI(deletedWishlist);
+    const newIndex = { ...userIndex, [userId]: updatedUserWishlists };
+    await writeJSON("wishlist/user-index.json", newIndex);
+
+    const wishlistForUI = await getWishListForUI(wishlist);
 
     return NextResponse.json<TData>({ data: wishlistForUI }, { status: 200 });
   } catch {
     return NextResponse.json<TData>(
-      { data: null, error: "failed to load data" },
+      { data: null, error: "Failed to load data" },
       { status: 500 }
     );
   }

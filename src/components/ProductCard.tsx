@@ -42,7 +42,6 @@ export const ProductCard: React.FC<TProps> = ({ product, wishlists }) => {
       <AddToWishlistButton
         className="absolute top-2 right-2 z-20"
         productId={product.id}
-        userId="u1" // TODO: Replace with actual user ID
         wishlists={wishlists}
       />
     </Card>

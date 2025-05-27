@@ -19,7 +19,7 @@ const getProducts = async () => {
 const Home: React.FC<TProps> = async () => {
   const [productsResult, wishlistsResult] = await Promise.all([
     getProducts(),
-    getWishlists("u1"),
+    getWishlists(),
   ]);
 
   const { data, error } = productsResult;

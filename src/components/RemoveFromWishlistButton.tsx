@@ -20,13 +20,11 @@ type TProps = NoChildren &
 export const RemoveFromWishlistButton: React.FC<TProps> = ({
   className,
   productId,
-  userId,
   wishlistId,
 }) => {
   const removeFromWishlist = async () => {
     try {
       const result = await removeProductFromWishlist({
-        userId,
         wishlistId,
         productId,
       });

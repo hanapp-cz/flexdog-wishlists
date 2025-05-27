@@ -23,10 +23,7 @@ import {
   DropdownMenuTrigger,
 } from './ui/Dropdown';
 
-type TAddParams = Pick<
-  FirstParam<typeof addProductToWishlist>,
-  "productId" | "userId"
->;
+type TAddParams = Pick<FirstParam<typeof addProductToWishlist>, "productId">;
 
 type TProps = NoChildren &
   TAddParams & {
@@ -45,7 +42,6 @@ type TProps = NoChildren &
 export const MoveToWishlistButton: React.FC<TProps> = ({
   className,
   productId,
-  userId,
   wishlists,
   wishlistId,
 }) => {
@@ -55,7 +51,6 @@ export const MoveToWishlistButton: React.FC<TProps> = ({
         productId,
         wishlistId,
         toWishlistId,
-        userId,
       });
 
       if (error || !data) {

@@ -7,8 +7,8 @@ import { TApiParams } from '@/types/params.types';
 import {
   TWishlist,
   TWishlistProduct,
-  TWishlists,
 } from '@/types/wishlists.types';
+import { checkUserAccess } from '@/utils/checkUserAccess';
 import {
   readJSON,
   writeJSON,
@@ -22,10 +22,24 @@ type TData =
 
 // Move a product from one wishlist to another
 export async function POST(request: NextRequest, { params }: TParams) {
-  const { userId, wishlistId, productId } = await params;
-  const filePath = `wishlist/${userId}.json`;
+  const { wishlistId, productId } = await params;
 
   try {
+    const userId = process.env.USER_ID ?? null;
+
+    // Check if the userId matches the wishlist owner
+    const { isAuthorized } = await checkUserAccess({
+      userId,
+      wishlistId,
+    });
+
+    if (!isAuthorized) {
+      return NextResponse.json<TData>(
+        { data: null, error: "Unauthorized access" },
+        { status: 401 }
+      );
+    }
+
     const { toWishlistId } = await request.json();
 
     if (!wishlistId || !toWishlistId || !productId) {
@@ -35,10 +49,12 @@ export async function POST(request: NextRequest, { params }: TParams) {
       );
     }
 
-    const wishlists: TWishlists = await readJSON(filePath);
-
-    const fromWishlist = wishlists[wishlistId];
-    const toWishlist = wishlists[toWishlistId];
+    const fromWishlistPromise = readJSON(`wishlist/${wishlistId}.json`);
+    const toWishlistPromise = readJSON(`wishlist/${toWishlistId}.json`);
+    const [fromWishlist, toWishlist]: RoA<TWishlist> = await Promise.all([
+      fromWishlistPromise,
+      toWishlistPromise,
+    ]);
 
     if (!fromWishlist || !toWishlist) {
       return NextResponse.json<TData>(
@@ -75,13 +91,16 @@ export async function POST(request: NextRequest, { params }: TParams) {
       products: [...toWishlist.products, product],
     };
 
-    const updatedWishlists: TWishlists = {
-      ...wishlists,
-      [wishlistId]: updatedFromWishlist,
-      [toWishlistId]: updatedToWishlist,
-    };
+    const fromPromise = writeJSON(
+      `wishlist/${updatedFromWishlist.id}.json`,
+      updatedFromWishlist
+    );
+    const toPromise = writeJSON(
+      `wishlist/${updatedToWishlist.id}.json`,
+      updatedToWishlist
+    );
 
-    await writeJSON(filePath, updatedWishlists);
+    await Promise.all([fromPromise, toPromise]);
 
     return NextResponse.json<TData>({ data: product }, { status: 200 });
   } catch {

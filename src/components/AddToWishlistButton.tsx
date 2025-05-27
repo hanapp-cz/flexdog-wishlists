@@ -23,10 +23,7 @@ import {
 } from './ui/Dropdown';
 import { WishlistDialog } from './WishlistDialog';
 
-type TAddParams = Pick<
-  FirstParam<typeof addProductToWishlist>,
-  "productId" | "userId"
->;
+type TAddParams = Pick<FirstParam<typeof addProductToWishlist>, "productId">;
 
 type TProps = NoChildren &
   TAddParams & {
@@ -38,13 +35,11 @@ type TProps = NoChildren &
 export const AddToWishlistButton: React.FC<TProps> = ({
   className,
   productId,
-  userId,
   wishlists,
 }) => {
   const addToWishlist = async (wishlistId: ID) => {
     try {
       const result = await addProductToWishlist({
-        userId,
         wishlistId,
         productId,
       });

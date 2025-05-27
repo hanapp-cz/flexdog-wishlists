@@ -68,11 +68,11 @@ export const WishlistDialog: React.FC<TProps> = ({
     try {
       let result;
       if (type === "add") {
-        result = await addWishlist({ wishlistData, userId: "u1" });
+        result = await addWishlist({ wishlistData });
       }
 
       if (type === "edit") {
-        result = await editWishlist({ wishlistData, userId: "u1", wishlistId });
+        result = await editWishlist({ wishlistData, wishlistId });
       }
 
       if (result.error || !result.data) {

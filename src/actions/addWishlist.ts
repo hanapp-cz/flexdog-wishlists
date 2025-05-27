@@ -6,17 +6,16 @@ import { TWishListMetadata } from '@/types/wishlists.types';
 import { getErrorMessage } from '@/utils/getErrorMessage';
 
 type TOptions = {
-  userId: ID;
   wishlistData: Partial<TWishListMetadata>;
 };
 
 /**
  * Add a new wishlist for a user
  */
-export const addWishlist = async ({ userId, wishlistData }: TOptions) => {
+export const addWishlist = async ({ wishlistData }: TOptions) => {
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/wishlists/${userId}`,
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/wishlists`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },

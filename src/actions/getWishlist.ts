@@ -4,16 +4,15 @@ import { getErrorMessage } from '@/utils/getErrorMessage';
 
 type TOptions = {
   wishlistId: ID;
-  userId: ID;
 };
 
 /**
  * Get a specific wishlist for a user
  */
-export const getWishlist = async ({ wishlistId, userId }: TOptions) => {
+export const getWishlist = async ({ wishlistId }: TOptions) => {
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/wishlists/${userId}/${wishlistId}`,
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/wishlists/${wishlistId}`,
       {
         next: { tags: [`wishlist-${wishlistId}`] },
       }

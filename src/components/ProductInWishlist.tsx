@@ -57,12 +57,10 @@ export const ProductInWishlist: React.FC<TProps> = ({
                 productId={product.id}
                 wishlists={wishlists}
                 wishlistId={wishlistId}
-                userId="u1" // TODO: Replace with actual user ID
               />
               <RemoveFromWishlistButton
                 productId={product.id}
                 wishlistId={wishlistId}
-                userId="u1" // TODO: Replace with actual user ID
               />
             </div>
           )}

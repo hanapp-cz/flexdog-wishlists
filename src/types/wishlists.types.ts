@@ -1,4 +1,4 @@
-import { TProductForUI } from './products.types';
+import { TProductForUI } from "./products.types";
 
 // * Server types
 export type TWishlistProduct = {
@@ -13,8 +13,6 @@ export type TWishlist = {
   isPublic: boolean;
   products: RoA<TWishlistProduct>;
 };
-
-export type TWishlists = Record<ID, TWishlist>;
 
 // * UI types
 export type TWishListMetadata = {

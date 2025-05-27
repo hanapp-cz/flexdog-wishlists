@@ -9,9 +9,8 @@ import { TWishListMetadata } from '@/types/wishlists.types';
 import { getErrorMessage } from '@/utils/getErrorMessage';
 
 type TProps = TPageProps;
-
 const Wishlists: React.FC<TProps> = async () => {
-  const { data, error } = await getWishlists("u1");
+  const { data, error } = await getWishlists();
 
   if (error || !data) {
     throw new Error(getErrorMessage(error, "Failed to load wishlists"));

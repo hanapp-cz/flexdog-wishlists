@@ -6,7 +6,6 @@ import { TWishListMetadata } from '@/types/wishlists.types';
 import { getErrorMessage } from '@/utils/getErrorMessage';
 
 type TOptions = {
-  userId: ID;
   wishlistId: ID;
   wishlistData: Partial<TWishListMetadata>;
 };
@@ -14,14 +13,10 @@ type TOptions = {
 /**
  * Edit an existing wishlist
  */
-export const editWishlist = async ({
-  wishlistId,
-  userId,
-  wishlistData,
-}: TOptions) => {
+export const editWishlist = async ({ wishlistId, wishlistData }: TOptions) => {
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/wishlists/${userId}/${wishlistId}`,
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/wishlists/${wishlistId}`,
       {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },

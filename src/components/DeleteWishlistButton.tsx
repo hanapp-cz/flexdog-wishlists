@@ -42,7 +42,7 @@ export const DeleteWishlistButton: React.FC<TProps> = ({
 
   const deleteWishlist = async () => {
     try {
-      const result = await deleteWishlistAction({ userId: "u1", wishlistId });
+      const result = await deleteWishlistAction(wishlistId);
 
       if (result.error || !result.data) {
         throw new Error(getErrorMessage(result.error));

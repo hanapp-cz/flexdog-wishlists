@@ -5,7 +5,6 @@ import { revalidateTag } from 'next/cache';
 import { getErrorMessage } from '@/utils/getErrorMessage';
 
 type TOptions = {
-  userId: ID;
   wishlistId: ID;
   productId: ID;
 };
@@ -15,15 +14,12 @@ type TOptions = {
  */
 export const removeProductFromWishlist = async ({
   productId,
-  userId,
   wishlistId,
 }: TOptions) => {
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/wishlists/${userId}/${wishlistId}/products/${productId}`,
-      {
-        method: "DELETE",
-      }
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/wishlists/${wishlistId}/products/${productId}`,
+      { method: "DELETE" }
     );
 
     // Invalidate the cache for this wishlist

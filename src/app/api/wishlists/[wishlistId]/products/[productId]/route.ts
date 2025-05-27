@@ -8,28 +8,44 @@ import { TProducts } from '@/types/products.types';
 import {
   TWishlist,
   TWishlistProduct,
-  TWishlists,
 } from '@/types/wishlists.types';
+import { checkUserAccess } from '@/utils/checkUserAccess';
 import {
   readJSON,
   writeJSON,
 } from '@/utils/fileUtils';
 
-type TParams = TApiParams<{ userId: ID; wishlistId: ID; productId: ID }>;
+type TParams = TApiParams<{ wishlistId: ID; productId: ID }>;
 
 type TData = { data: TWishlist; error?: never } | { data: null; error: string };
 
 // Add a product to a user's wishlist
 export async function POST(request: NextRequest, { params }: TParams) {
-  const { userId, wishlistId, productId } = await params;
+  const { wishlistId, productId } = await params;
 
-  const filePath = `wishlist/${userId}.json`;
+  const filePath = `wishlist/${wishlistId}.json`;
   const productsFilePath = `products.json`;
 
   try {
-    const availableProducts: TProducts = await readJSON(productsFilePath);
-    const wishlists: TWishlists = await readJSON(filePath);
-    const wishlist = wishlists[wishlistId];
+    const userId = process.env.USER_ID ?? null;
+
+    // Check if the userId matches the wishlist owner
+    const { isAuthorized } = await checkUserAccess({
+      userId,
+      wishlistId,
+    });
+
+    if (!isAuthorized) {
+      return NextResponse.json<TData>(
+        { data: null, error: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+
+    const productsPromise = readJSON(productsFilePath);
+    const wishlistPromise = readJSON(filePath);
+    const [availableProducts, wishlist]: [TProducts, TWishlist] =
+      await Promise.all([productsPromise, wishlistPromise]);
 
     if (!wishlist) {
       return NextResponse.json<TData>(
@@ -64,8 +80,7 @@ export async function POST(request: NextRequest, { params }: TParams) {
       products: [...wishlist.products, newProduct],
     };
 
-    const newWishlists = { ...wishlists, [wishlistId]: updatedWishlist };
-    await writeJSON(filePath, newWishlists);
+    await writeJSON(filePath, updatedWishlist);
 
     return NextResponse.json<TData>({ data: updatedWishlist }, { status: 200 });
   } catch {
@@ -78,12 +93,27 @@ export async function POST(request: NextRequest, { params }: TParams) {
 
 // Remove a product from a user's wishlist
 export async function DELETE(request: NextRequest, { params }: TParams) {
-  const { userId, wishlistId, productId } = await params;
-  const filePath = `wishlist/${userId}.json`;
+  const { wishlistId, productId } = await params;
+  const filePath = `wishlist/${wishlistId}.json`;
 
   try {
-    const wishlists: TWishlists = await readJSON(filePath);
-    const wishlist = wishlists[wishlistId];
+    const userId = process.env.USER_ID ?? null;
+
+    // Check if the userId matches the wishlist owner
+    const { isAuthorized } = await checkUserAccess({
+      userId,
+      wishlistId,
+    });
+
+    if (!isAuthorized) {
+      return NextResponse.json<TData>(
+        { data: null, error: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+
+    const wishlist: TWishlist = await readJSON(filePath);
+
     if (!wishlist) {
       return NextResponse.json<TData>(
         { data: null, error: "Wishlist not found" },
@@ -96,8 +126,7 @@ export async function DELETE(request: NextRequest, { params }: TParams) {
       products: wishlist.products.filter((p) => p.id !== productId),
     };
 
-    const newWishlists = { ...wishlists, [wishlistId]: updatedWishlist };
-    await writeJSON(filePath, newWishlists);
+    await writeJSON(filePath, updatedWishlist);
 
     return NextResponse.json<TData>({ data: updatedWishlist }, { status: 200 });
   } catch {

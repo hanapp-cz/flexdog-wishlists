@@ -22,7 +22,7 @@ const Product: React.FC<TProps> = async ({ params }) => {
 
   const [productsResult, wishlistsResult] = await Promise.all([
     getProduct(productId),
-    getWishlists("u1"),
+    getWishlists(),
   ]);
 
   const { data, error } = productsResult;
@@ -56,7 +56,6 @@ const Product: React.FC<TProps> = async ({ params }) => {
             className="absolute top-4 right-4 shadow-md"
             productId={product.id}
             wishlists={wishlists}
-            userId="u1" // TODO: Replace with actual user ID
           />
         </div>
 

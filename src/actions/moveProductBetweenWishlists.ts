@@ -3,7 +3,6 @@
 import { revalidateTag } from 'next/cache';
 
 type TOptions = {
-  userId: ID;
   wishlistId: ID;
   productId: ID;
   toWishlistId: ID;
@@ -14,17 +13,14 @@ type TOptions = {
  */
 export const moveProductBetweenWishlists = async ({
   productId,
-  userId,
   wishlistId,
   toWishlistId,
 }: TOptions) => {
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/api/wishlists/${userId}/${wishlistId}/products/${productId}/move-product`,
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/wishlists/${wishlistId}/products/${productId}/move-product`,
     {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ productId, toWishlistId }),
     }
   );

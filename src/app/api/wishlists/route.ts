@@ -3,38 +3,54 @@ import {
   NextResponse,
 } from 'next/server';
 
-import { TApiParams } from '@/types/params.types';
 import {
   TWishlist,
   TWishListMetadata,
-  TWishlists,
 } from '@/types/wishlists.types';
 import {
   readJSON,
   writeJSON,
 } from '@/utils/fileUtils';
 
-type TParams = TApiParams<{ userId: ID }>;
-
 type TData =
   | { data: RoA<TWishListMetadata> | TWishListMetadata; error?: never }
   | { data: null; error: string };
 
 // get all wishlists for a user
-export async function GET(request: NextRequest, { params }: TParams) {
-  const { userId } = await params;
-
+export async function GET() {
   try {
-    const wishlists: TWishlists = await readJSON(`wishlist/${userId}.json`);
+    const userId = process.env.USER_ID ?? null;
 
-    if (!wishlists) {
+    if (!userId) {
+      return NextResponse.json<TData>(
+        { data: null, error: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+
+    // Load the user-to-wishlist index
+    const userIndex = await readJSON("wishlist/user-index.json");
+    const wishlistIds: RoA<ID> = userIndex[userId] || [];
+
+    if (!wishlistIds) {
       return NextResponse.json<TData>(
         { data: null, error: "wishlists not found" },
         { status: 404 }
       );
     }
 
-    const wishListsForUI = Object.values(wishlists).map(getWishListForUI);
+    // Load each wishlist file
+    const wishlists: RoA<TWishlist> = await Promise.all(
+      wishlistIds.map(async (id) => {
+        try {
+          return await readJSON(`wishlist/${id}.json`);
+        } catch {
+          return null;
+        }
+      })
+    );
+
+    const wishListsForUI = wishlists.filter(Boolean).map(getWishListForUI);
 
     return NextResponse.json<TData>({ data: wishListsForUI }, { status: 200 });
   } catch {
@@ -46,10 +62,17 @@ export async function GET(request: NextRequest, { params }: TParams) {
 }
 
 // create a new wishlist for a user
-export async function POST(request: NextRequest, { params }: TParams) {
-  const { userId } = await params;
-
+export async function POST(request: NextRequest) {
   try {
+    const userId = process.env.USER_ID ?? null;
+
+    if (!userId) {
+      return NextResponse.json<TData>(
+        { data: null, error: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+
     const requestData: Partial<TWishlist> = await request.json();
 
     if (!requestData.name) {
@@ -59,7 +82,6 @@ export async function POST(request: NextRequest, { params }: TParams) {
       );
     }
 
-    const wishlists = await readJSON(`wishlist/${userId}.json`);
     const newWishlist: TWishlist = {
       id: crypto.randomUUID(),
       name: requestData.name,
@@ -68,15 +90,20 @@ export async function POST(request: NextRequest, { params }: TParams) {
       isPublic: false,
     };
 
-    if (!wishlists) {
-      // Create new file with new wishlist
-      const newWishlists = { [newWishlist.id]: newWishlist };
-      await writeJSON(`wishlist/${userId}.json`, newWishlists);
-    }
+    // Create new file with new wishlist
+    await writeJSON(`wishlist/${newWishlist.id}.json`, newWishlist);
 
-    const updatedWishlists = { ...wishlists, [newWishlist.id]: newWishlist };
+    // Update user index
+    const userIndex = await readJSON("wishlist/user-index.json");
+    const userWishlists = userIndex[userId] || [];
+    const newUserWishlists = [...userWishlists, newWishlist.id];
 
-    await writeJSON(`wishlist/${userId}.json`, updatedWishlists);
+    const newUserIndex = {
+      ...userIndex,
+      [userId]: newUserWishlists,
+    };
+
+    await writeJSON("wishlist/user-index.json", newUserIndex);
 
     return NextResponse.json<TData>(
       { data: getWishListForUI(newWishlist) },
@@ -92,7 +119,7 @@ export async function POST(request: NextRequest, { params }: TParams) {
 
 // * HELPERS
 
-const getWishListForUI = (wishlist: TWishlist) => {
+const getWishListForUI = (wishlist: TWishlist): TWishListMetadata => {
   const { products, ...metaData } = wishlist;
 
   return {
